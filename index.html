@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Filter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    select, button {
+      margin: 5px;
+      padding: 8px;
+    }
+    #questionBox {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Filter Questions</h1>
+
+  <label>Subject:</label>
+  <select id="subject"></select>
+
+  <label>Difficulty:</label>
+  <select id="difficulty"></select>
+
+  <button onclick="getQuestion()">Get Question</button>
+
+  <div id="questionBox">Your filtered question will appear here!</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
