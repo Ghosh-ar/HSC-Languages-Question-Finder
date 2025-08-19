@@ -2,68 +2,64 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwpzB6tOE0ywB7NDeYwcfP7
 
 let questions = [];
 
-// Load questions from Google Sheets API
 window.onload = async () => {
   try {
     const res = await fetch(API_URL);
     questions = await res.json();
-    populateSubjects();
+    populateFilters();
   } catch (err) {
     console.error("Error fetching questions:", err);
   }
 };
 
-// Populate Subject dropdown
-function populateSubjects() {
-  const subjectSelect = document.getElementById("subject");
-  const subjects = [...new Set(questions.map(q => q.Subject))];
-  subjects.forEach(s => {
-    const option = document.createElement("option");
-    option.value = s;
-    option.textContent = s;
-    subjectSelect.appendChild(option);
-  });
-
-  subjectSelect.addEventListener("change", populateTopics);
-}
-
-// Populate Topic dropdown based on selected subject
-function populateTopics() {
+function populateFilters() {
+  const langSelect = document.getElementById("languageCourse");
   const topicSelect = document.getElementById("topic");
-  topicSelect.innerHTML = "<option value=''>Select Topic</option>";
-  const subject = document.getElementById("subject").value;
+  const yearSelect = document.getElementById("year");
 
-  const topics = [...new Set(
-    questions.filter(q => q.Subject === subject).map(q => q.Topic)
-  )];
+  const languages = [...new Set(questions.map(q => q.LanguageCourse))];
+  const topics = [...new Set(questions.map(q => q.Topic))];
+  const years = [...new Set(questions.map(q => q.Year))];
 
-  topics.forEach(t => {
-    const option = document.createElement("option");
-    option.value = t;
-    option.textContent = t;
-    topicSelect.appendChild(option);
+  languages.forEach(l => { 
+    const opt = document.createElement("option");
+    opt.value = l; opt.textContent = l; langSelect.appendChild(opt);
+  });
+  topics.forEach(t => { 
+    const opt = document.createElement("option");
+    opt.value = t; opt.textContent = t; topicSelect.appendChild(opt);
+  });
+  years.forEach(y => { 
+    const opt = document.createElement("option");
+    opt.value = y; opt.textContent = y; yearSelect.appendChild(opt);
   });
 }
 
-// Get filtered question
 function getQuestion() {
-  const subject = document.getElementById("subject").value;
+  const lang = document.getElementById("languageCourse").value;
   const topic = document.getElementById("topic").value;
-  const difficulty = document.getElementById("difficulty").value;
+  const year = document.getElementById("year").value;
 
   let filtered = questions;
 
-  if (subject) filtered = filtered.filter(q => q.Subject === subject);
-  if (topic) filtered = filtered.filter(q => q.Topic === topic);
-  if (difficulty) filtered = filtered.filter(q => q.Difficulty === difficulty);
+  if(lang) filtered = filtered.filter(q => q.LanguageCourse === lang);
+  if(topic) filtered = filtered.filter(q => q.Topic === topic);
+  if(year) filtered = filtered.filter(q => q.Year === year);
 
-  const box = document.getElementById("questionBox");
+  const questionBox = document.getElementById("questionText");
+  const imageEl = document.getElementById("questionImage");
+  const solutionLink = document.getElementById("solutionLink");
 
-  if (filtered.length > 0) {
+  if(filtered.length > 0){
     const q = filtered[Math.floor(Math.random() * filtered.length)];
-    box.textContent = q.Question;
+    questionBox.textContent = q.Question;
+    imageEl.src = q.ImageLink;
+    solutionLink.href = q.SolutionLink;
   } else {
-    box.textContent = "No questions found for these filters!";
+    questionBox.textContent = "No question found for these filters!";
+    imageEl.src = "";
+    solutionLink.href = "#";
   }
 }
+
 
