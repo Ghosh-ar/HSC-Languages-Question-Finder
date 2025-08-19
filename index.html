@@ -4,103 +4,133 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HSC Question Finder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Poppins', sans-serif;
       margin: 0;
-      padding: 0;
       min-height: 100vh;
       display: flex;
+      background: linear-gradient(90deg, #2563eb, #111, #9333ea);
+      color: #fff;
       flex-direction: column;
-      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+
+    .container {
+      flex: 1;
+      width: 100%;
+      max-width: 1200px;
+      background: #111;
+      padding: 30px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin: 0;
       color: #fff;
     }
-    .header {
-      text-align: center;
-      padding: 20px;
-      background: linear-gradient(90deg, #2563eb, #9333ea);
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
+
     .filters {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
-      padding: 15px;
-      gap: 10px;
-      background: #111;
+      gap: 15px;
+      justify-content: center;
     }
+
     select, button {
-      padding: 10px 15px;
-      border-radius: 8px;
+      padding: 12px 15px;
+      border-radius: 10px;
       border: none;
       font-size: 1rem;
+      font-weight: 600;
       background: #222;
       color: #fff;
-    }
-    button {
-      cursor: pointer;
-      background: #2563eb;
       transition: 0.2s;
     }
+
+    button {
+      background: #2563eb;
+      cursor: pointer;
+    }
+
     button:hover {
       background: #1d4ed8;
     }
+
     .result {
-      flex: 1;
       display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
       justify-content: center;
       align-items: flex-start;
-      padding: 20px;
-      gap: 30px;
-      flex-wrap: wrap;
     }
+
     .image-box, .info-box {
       background: #1a1a1a;
-      border-radius: 12px;
-      padding: 15px;
+      padding: 20px;
+      border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
       max-width: 600px;
       width: 100%;
     }
+
     .image-box img {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
+      object-fit: contain;
     }
+
     .info-box a {
       color: #2563eb;
       text-decoration: underline;
+      font-weight: 600;
     }
+
+    .info-box h3 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .result {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <div class="header">
+
+  <div class="container">
     <h1>HSC Question Finder</h1>
-  </div>
 
-  <div class="filters">
-    <select id="languageCourse">
-      <option value="">Select Language Course</option>
-    </select>
-    <select id="topic">
-      <option value="">Select Topic</option>
-    </select>
-    <select id="year">
-      <option value="">Select Year</option>
-    </select>
-    <button onclick="getQuestion()">Find Question</button>
-  </div>
-
-  <div class="result">
-    <div class="image-box" id="imageBox">
-      <img id="questionImage" src="" alt="Question Image">
+    <div class="filters">
+      <select id="languageCourse"><option value="">Select Language Course</option></select>
+      <select id="topic"><option value="">Select Topic</option></select>
+      <select id="year"><option value="">Select Year</option></select>
+      <select id="questionType"><option value="">Select Question Type</option></select>
+      <button onclick="getQuestion()">Find Question</button>
     </div>
-    <div class="info-box" id="infoBox">
-      <h3 id="questionText">Question info will appear here</h3>
-      <p><a id="solutionLink" href="#" target="_blank">View Marking / Solution</a></p>
+
+    <div class="result">
+      <div class="image-box" id="imageBox">
+        <img id="questionImage" src="" alt="Question Image">
+      </div>
+      <div class="info-box" id="infoBox">
+        <h3 id="questionText">Question info will appear here</h3>
+        <p><a id="solutionLink" href="#" target="_blank">View Marking / Solution</a></p>
+      </div>
     </div>
   </div>
 
