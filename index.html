@@ -9,77 +9,101 @@
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #fff;
+    }
+    .header {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(90deg, #2563eb, #9333ea);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .filters {
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      width: 400px;
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-      color: #333;
+      flex-wrap: wrap;
+      padding: 15px;
+      gap: 10px;
+      background: #111;
     }
     select, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      padding: 10px 15px;
       border-radius: 8px;
-      border: 1px solid #ddd;
+      border: none;
       font-size: 1rem;
+      background: #222;
+      color: #fff;
     }
     button {
-      background: #2563eb;
-      color: white;
-      border: none;
       cursor: pointer;
+      background: #2563eb;
       transition: 0.2s;
     }
     button:hover {
       background: #1d4ed8;
     }
-    #questionBox {
-      margin-top: 20px;
-      background: #f9fafb;
+    .result {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .image-box, .info-box {
+      background: #1a1a1a;
+      border-radius: 12px;
       padding: 15px;
-      border-radius: 10px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-      min-height: 60px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      max-width: 600px;
+      width: 100%;
+    }
+    .image-box img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .info-box a {
+      color: #2563eb;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="header">
     <h1>HSC Question Finder</h1>
+  </div>
 
-    <select id="subject">
-      <option value="">Select Subject</option>
+  <div class="filters">
+    <select id="languageCourse">
+      <option value="">Select Language Course</option>
     </select>
-
     <select id="topic">
       <option value="">Select Topic</option>
     </select>
-
-    <select id="difficulty">
-      <option value="">Select Difficulty</option>
-      <option value="Easy">Easy</option>
-      <option value="Medium">Medium</option>
-      <option value="Hard">Hard</option>
+    <select id="year">
+      <option value="">Select Year</option>
     </select>
-
     <button onclick="getQuestion()">Find Question</button>
+  </div>
 
-    <div id="questionBox">Your question will appear here!</div>
+  <div class="result">
+    <div class="image-box" id="imageBox">
+      <img id="questionImage" src="" alt="Question Image">
+    </div>
+    <div class="info-box" id="infoBox">
+      <h3 id="questionText">Question info will appear here</h3>
+      <p><a id="solutionLink" href="#" target="_blank">View Marking / Solution</a></p>
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
