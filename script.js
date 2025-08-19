@@ -1,4 +1,5 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwpzB6tOE0ywB7NDeYwcfP7DSQcDo0GbEdZFRTImWMzMQ3jQeb54RuWeC0RBqcVEunu/exec";
+// NEW API URL (your deployed Apps Script endpoint)
+const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLg52YLxdDB9-8P4C2Rr5AoTpRuwkcvZBr0vYrAnyG9D9tG3mEEeZCo97Y7mK2p6LiwV9zCl6FX6J0ub_-J3K4glQWaQoXMDf5uIRa1RfY9TCcf50kg6rKniAZ4S-0-awGg1KlQ8OwDCyKaa4YmXDS3-9X0rkzzPhT2PbKlcyMm39eneg3EXcKAqgPGmcBJ28SbhZMeTUmj-6_lYjPXYjOFAkpqPfFnojSST8EJ3fqNSOU0-mSkHBP7Gch4J0lXLP-5k4xdriHLkaZMIXO_FcIwm1jBnWg&lib=MGtuZOK-HqxDQ8MVPbSrVgphRpv1Jlb43";
 
 let questions = [];
 
@@ -37,16 +38,16 @@ function getQuestion() {
 
   let filtered = questions;
 
-  if(lang) filtered = filtered.filter(q => q.LanguageCourse === lang);
-  if(topic) filtered = filtered.filter(q => q.Topic === topic);
-  if(year) filtered = filtered.filter(q => q.Year === year);
-  if(type) filtered = filtered.filter(q => q.Type === type);
+  if (lang) filtered = filtered.filter(q => q.LanguageCourse === lang);
+  if (topic) filtered = filtered.filter(q => q.Topic === topic);
+  if (year) filtered = filtered.filter(q => q.Year === year);
+  if (type) filtered = filtered.filter(q => q.Type === type);
 
   const questionBox = document.getElementById("questionText");
   const imageEl = document.getElementById("questionImage");
   const solutionLink = document.getElementById("solutionLink");
 
-  if(filtered.length > 0){
+  if (filtered.length > 0) {
     const q = filtered[Math.floor(Math.random() * filtered.length)];
     questionBox.textContent = q.Question;
     imageEl.src = q.ImageLink;
@@ -57,6 +58,3 @@ function getQuestion() {
     solutionLink.href = "#";
   }
 }
-
-
-
