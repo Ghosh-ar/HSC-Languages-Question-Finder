@@ -2,60 +2,68 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwpzB6tOE0ywB7NDeYwcfP7
 
 let questions = [];
 
-// Fetch questions from the Google Sheets API
-async function fetchQuestions() {
+// Load questions from Google Sheets API
+window.onload = async () => {
   try {
     const res = await fetch(API_URL);
-    const data = await res.json();
-    questions = data;
-
-    populateFilters();
-  } catch (error) {
-    console.error("Error fetching questions:", error);
+    questions = await res.json();
+    populateSubjects();
+  } catch (err) {
+    console.error("Error fetching questions:", err);
   }
-}
+};
 
-// Fill dropdown filters
-function populateFilters() {
-  const subjects = [...new Set(questions.map(q => q.Subject))];
-  const difficulties = [...new Set(questions.map(q => q.Difficulty))];
-
+// Populate Subject dropdown
+function populateSubjects() {
   const subjectSelect = document.getElementById("subject");
-  const difficultySelect = document.getElementById("difficulty");
-
+  const subjects = [...new Set(questions.map(q => q.Subject))];
   subjects.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s;
-    opt.textContent = s;
-    subjectSelect.appendChild(opt);
+    const option = document.createElement("option");
+    option.value = s;
+    option.textContent = s;
+    subjectSelect.appendChild(option);
   });
 
-  difficulties.forEach(d => {
-    const opt = document.createElement("option");
-    opt.value = d;
-    opt.textContent = d;
-    difficultySelect.appendChild(opt);
+  subjectSelect.addEventListener("change", populateTopics);
+}
+
+// Populate Topic dropdown based on selected subject
+function populateTopics() {
+  const topicSelect = document.getElementById("topic");
+  topicSelect.innerHTML = "<option value=''>Select Topic</option>";
+  const subject = document.getElementById("subject").value;
+
+  const topics = [...new Set(
+    questions.filter(q => q.Subject === subject).map(q => q.Topic)
+  )];
+
+  topics.forEach(t => {
+    const option = document.createElement("option");
+    option.value = t;
+    option.textContent = t;
+    topicSelect.appendChild(option);
   });
 }
 
-// Get a filtered question
+// Get filtered question
 function getQuestion() {
   const subject = document.getElementById("subject").value;
+  const topic = document.getElementById("topic").value;
   const difficulty = document.getElementById("difficulty").value;
 
-  const filtered = questions.filter(q =>
-    (!subject || q.Subject === subject) &&
-    (!difficulty || q.Difficulty === difficulty)
-  );
+  let filtered = questions;
 
-  const questionBox = document.getElementById("questionBox");
+  if (subject) filtered = filtered.filter(q => q.Subject === subject);
+  if (topic) filtered = filtered.filter(q => q.Topic === topic);
+  if (difficulty) filtered = filtered.filter(q => q.Difficulty === difficulty);
+
+  const box = document.getElementById("questionBox");
+
   if (filtered.length > 0) {
-    const randomQ = filtered[Math.floor(Math.random() * filtered.length)];
-    questionBox.textContent = randomQ.Question;
+    const q = filtered[Math.floor(Math.random() * filtered.length)];
+    box.textContent = q.Question;
   } else {
-    questionBox.textContent = "No questions found for that filter!";
+    box.textContent = "No questions found for these filters!";
   }
 }
 
-// Load questions when page opens
-fetchQuestions();
