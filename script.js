@@ -1,84 +1,78 @@
-// 🔗 Replace this with your Apps Script web app URL
-const apiUrl = "https://script.google.com/macros/s/AKfycbwpzB6tOE0ywB7NDeYwcfP7DSQcDo0GbEdZFRTImWMzMQ3jQeb54RuWeC0RBqcVEunu/exec";
+<script>
+let allData = [];
+let filteredData = [];
 
-let questionsData = [];
+// Load the CSV file
+async function loadCSV() {
+    const response = await fetch("questions.csv");
+    const text = await response.text();
+    const rows = text.split("\n").map(r => r.split(","));
+    
+    const headers = rows[0];
+    allData = rows.slice(1).map(r => {
+        let obj = {};
+        headers.forEach((h, i) => obj[h.trim()] = r[i]?.trim());
+        return obj;
+    });
 
-async function fetchData() {
-  try {
-    const response = await fetch(apiUrl);
-    questionsData = await response.json();
     populateFilters();
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
 }
 
+// Populate dropdown filters dynamically
 function populateFilters() {
-  const courses = [...new Set(questionsData.map(q => q.LanguageCourse).filter(Boolean))];
-  const topics = [...new Set(questionsData.map(q => q.Topic).filter(Boolean))];
-  const years = [...new Set(questionsData.map(q => q.Year).filter(Boolean))];
-  const types = [...new Set(questionsData.map(q => q.Type).filter(Boolean))];
+    const subjects = [...new Set(allData.map(q => q.Subject))];
+    const topics = [...new Set(allData.map(q => q.Topic))];
+    const years = [...new Set(allData.map(q => q.Year))];
 
-  fillSelect("languageCourse", courses);
-  fillSelect("topic", topics);
-  fillSelect("year", years);
-  fillSelect("questionType", types);
+    populateDropdown("subjectSelect", subjects);
+    populateDropdown("topicSelect", topics);
+    populateDropdown("yearSelect", years);
 }
 
-function fillSelect(id, options) {
-  const select = document.getElementById(id);
-  options.forEach(opt => {
-    const option = document.createElement("option");
-    option.value = opt;
-    option.textContent = opt;
-    select.appendChild(option);
-  });
+function populateDropdown(id, items) {
+    const select = document.getElementById(id);
+    select.innerHTML = `<option value="">All</option>`;
+    items.forEach(i => {
+        if (i) select.innerHTML += `<option value="${i}">${i}</option>`;
+    });
 }
 
-function getQuestion() {
-  const course = document.getElementById("languageCourse").value;
-  const topic = document.getElementById("topic").value;
-  const year = document.getElementById("year").value;
-  const type = document.getElementById("questionType").value;
+// Apply filters and display one question
+function findQuestion() {
+    const subject = document.getElementById("subjectSelect").value;
+    const topic = document.getElementById("topicSelect").value;
+    const year = document.getElementById("yearSelect").value;
 
-  const filtered = questionsData.filter(q =>
-    (!course || q.LanguageCourse === course) &&
-    (!topic || q.Topic === topic) &&
-    (!year || q.Year.toString() === year) &&
-    (!type || q.Type === type)
-  );
+    filteredData = allData.filter(q =>
+        (!subject || q.Subject === subject) &&
+        (!topic || q.Topic === topic) &&
+        (!year || q.Year === year)
+    );
 
-  if (filtered.length > 0) {
-    const question = filtered[Math.floor(Math.random() * filtered.length)];
-    displayQuestion(question);
-  } else {
-    document.getElementById("questionText").innerText = "No question found for these filters!";
-    document.getElementById("questionImage").style.display = "none";
-    document.getElementById("solutionLink").style.display = "none";
-  }
+    if (filteredData.length > 0) {
+        const q = filteredData[0];
+        document.getElementById("questionContainer").innerHTML = `
+            <h3>Question Image</h3>
+            ${q["Question Image"] ? `<img src="${q["Question Image"]}" width="400">` : "No image available"}
+            <br><br>
+            <button onclick="showSolution('${q["Solution"] || ""}')">View Marking / Solution</button>
+        `;
+    } else {
+        document.getElementById("questionContainer").innerHTML = `
+            <p>No question found for these filters!</p>
+        `;
+    }
 }
 
-function displayQuestion(record) {
-  // Show question text
-  document.getElementById("questionText").innerText = record.Question || "No question text";
-
-  // Show question image
-  const img = document.getElementById("questionImage");
-  if (record.ImageLink) {
-    img.src = record.ImageLink;
-    img.style.display = "block";
-  } else {
-    img.style.display = "none";
-  }
-
-  // Show solution link
-  const solution = document.getElementById("solutionLink");
-  if (record.SolutionLink) {
-    solution.href = record.SolutionLink;
-    solution.style.display = "inline";
-  } else {
-    solution.style.display = "none";
-  }
+// Show the solution in an alert or new window
+function showSolution(solution) {
+    if (solution) {
+        alert("Solution:\n\n" + solution);
+    } else {
+        alert("No solution available for this question.");
+    }
 }
 
-fetchData();
+window.onload = loadCSV;
+</script>
+
