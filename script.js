@@ -1,78 +1,83 @@
 <script>
-let allData = [];
-let filteredData = [];
+let sheetData = [];
 
-// Load the CSV file
+// ✅ Load CSV file into memory
 async function loadCSV() {
-    const response = await fetch("questions.csv");
+    const response = await fetch("data.csv"); // <-- your CSV file
     const text = await response.text();
-    const rows = text.split("\n").map(r => r.split(","));
-    
-    const headers = rows[0];
-    allData = rows.slice(1).map(r => {
+
+    const rows = text.split("\n").map(r => r.trim()).filter(r => r);
+    const headers = rows[0].split(",");
+    sheetData = rows.slice(1).map(row => {
+        const values = row.split(",");
         let obj = {};
-        headers.forEach((h, i) => obj[h.trim()] = r[i]?.trim());
+        headers.forEach((h, i) => obj[h.trim()] = values[i] ? values[i].trim() : "");
         return obj;
     });
 
-    populateFilters();
+    populateFilters(headers);
 }
 
-// Populate dropdown filters dynamically
-function populateFilters() {
-    const subjects = [...new Set(allData.map(q => q.Subject))];
-    const topics = [...new Set(allData.map(q => q.Topic))];
-    const years = [...new Set(allData.map(q => q.Year))];
+// ✅ Populate dropdown filters
+function populateFilters(headers) {
+    const yearSet = new Set();
+    const topicSet = new Set();
 
-    populateDropdown("subjectSelect", subjects);
-    populateDropdown("topicSelect", topics);
-    populateDropdown("yearSelect", years);
-}
+    sheetData.forEach(row => {
+        if (row["Year"]) yearSet.add(row["Year"]);
+        if (row["Topic"]) topicSet.add(row["Topic"]);
+    });
 
-function populateDropdown(id, items) {
-    const select = document.getElementById(id);
-    select.innerHTML = `<option value="">All</option>`;
-    items.forEach(i => {
-        if (i) select.innerHTML += `<option value="${i}">${i}</option>`;
+    let yearSelect = document.getElementById("yearFilter");
+    yearSet.forEach(y => {
+        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+    });
+
+    let topicSelect = document.getElementById("topicFilter");
+    topicSet.forEach(t => {
+        topicSelect.innerHTML += `<option value="${t}">${t}</option>`;
     });
 }
 
-// Apply filters and display one question
+// ✅ Main function to show a question
 function findQuestion() {
-    const subject = document.getElementById("subjectSelect").value;
-    const topic = document.getElementById("topicSelect").value;
-    const year = document.getElementById("yearSelect").value;
+    const year = document.getElementById("yearFilter").value;
+    const topic = document.getElementById("topicFilter").value;
 
-    filteredData = allData.filter(q =>
-        (!subject || q.Subject === subject) &&
-        (!topic || q.Topic === topic) &&
-        (!year || q.Year === year)
-    );
+    const filteredData = sheetData.filter(row => {
+        return (year === "all" || row["Year"] === year) &&
+               (topic === "all" || row["Topic"] === topic);
+    });
+
+    let container = document.getElementById("questionContainer");
 
     if (filteredData.length > 0) {
-        const q = filteredData[0];
-        document.getElementById("questionContainer").innerHTML = `
-            <h3>Question Image</h3>
-            ${q["Question Image"] ? `<img src="${q["Question Image"]}" width="400">` : "No image available"}
+        const q = filteredData[0]; // just show first match
+        container.innerHTML = `
+            <h3>Question</h3>
+            ${q["Question Image"] 
+                ? `<img src="${q["Question Image"]}" width="400">`
+                : `<p>No image available</p>`}
             <br><br>
-            <button onclick="showSolution('${q["Solution"] || ""}')">View Marking / Solution</button>
+            <button onclick="showSolution('${q["Solution"] || ""}')">
+                View Marking / Solution
+            </button>
         `;
     } else {
-        document.getElementById("questionContainer").innerHTML = `
-            <p>No question found for these filters!</p>
-        `;
+        container.innerHTML = `<p>No question found for these filters!</p>`;
     }
 }
 
-// Show the solution in an alert or new window
-function showSolution(solution) {
-    if (solution) {
-        alert("Solution:\n\n" + solution);
-    } else {
-        alert("No solution available for this question.");
+// ✅ Show solution popup
+function showSolution(sol) {
+    if (!sol) {
+        alert("No solution available.");
+        return;
     }
+    alert("Solution:\n" + sol);
 }
 
 window.onload = loadCSV;
 </script>
+
 
